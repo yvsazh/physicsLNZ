@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Створення акаунта{% endblock %}
+
+{% block content %}
+    <style>
+        label {
+            display:block;
+            text-align:left;
+            margin-bottom: 10px;
+        }
+        .helptext {
+            color:red;
+            display:block;
+            margin-bottom: 20px;
+        }
+    </style>
+    <br>
+    <h1>Зареєструйтеся</h1>
+    <br>
+    <center>
+    <form class="form" action="{% url 'account:register' %}" method="post">
+        {{ user_form.as_p }}
+        {% csrf_token %}
+        <br>
+        <button type="submit" class="update-button" style="width: auto;">Зареєструватися</button>
+    </form>
+    </center>
+{% endblock %}

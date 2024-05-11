@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Увійти{% endblock %}
+
+{% block content %}
+
+<br>
+<br>
+<center>
+    <h1>Увійти в акаунт</h1>
+    <br>
+<form class="form" method="post" action="{% url 'login' %}">
+{% csrf_token %}
+<table>
+<tr>
+  <td><p>{{ form.username.label_tag }}</p>{{ form.username }}</td>
+</tr>
+
+<tr>
+  <td><br><p>{{ form.password.label_tag }}</p>{{ form.password }}</td>
+</tr>
+</table>
+<br>
+<button type="submit" class="update-button" style="width: auto;">Увійти</button>
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+</center>
+
+{% endblock %}

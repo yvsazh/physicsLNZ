@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{project.name}}{% endblock %}
+
+{% block content %}
+  {% if request.user == project.user %}
+  <div class="modal" id="project-settings-modal">
+    <div class="modal-header">
+      <h1 style="text-align: left;">Налаштування проекту</h1>
+      <a href="#" class="delete-button" id="close-settings">Закрити</a>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="inner-modal">
+      <form method="POST" action="{% url 'physics:edit_project' project.id %}">
+        {% csrf_token %}
+        <p>Назва проекту:</p>
+        <input type="text" id="project_name" name="name" placeholder="Назва проекту" value="{{project.name}}" style="display:block; width:99%;">
+        <p>Приватність проекту:</p>
+        <select name="privacy" id="privacy">
+          <option value="public" {% if project.privacy == 'public' %}selected="selected"{% endif %}>Публічний</option>
+          <option value="private"{% if project.privacy == 'private' %}selected="selected"{% endif %}>Приватний</option>
+        </select>
+        <button class="update-button">Змінити</button>
+      </form>
+      <hr>
+      <button class="update-button" id="delete_project">Видалити проект</button>
+      <div class="are-you-sure" style="display:none;">
+        <p>Ви впевнені, що хочете видалити проект?</p>
+        <br>
+        <button class="update-button" id="no_delete" style="color: green;">Ні, я не впевнений</button>
+        <a href="{% url 'physics:delete_project' project.id %}" class="delete-button" id="sure_delete" style="display: block; width: auto; margin: 0px; text-align:center; margin-bottom: 10px;">Так, я впевнений</a>
+        <hr>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="modal" id="base-learning-modal">
+    <div class="modal-header">
+      <h1 style="text-align: left;">Базове управління</h1>
+      <a href="#" class="delete-button" id="close-base-learning">Закрити</a>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="inner-modal">
+      <h4>WASD - щоб рухати камеру</h4>
+      <br>
+      <h4>Покрутіть колесо миші щоб змінити масштаб</h4>
+      <br>
+      <h4>Для перейменування обʼєкту, виберіть його, натисніть на його назву, та введіть нову. Після цього натисніть Enter.</h4>
+    </div>
+  </div>
+  <div class="content">
+    <p id="hint">Якщо ви не бачите весь інтерфейс, <b>натисніть ctrl - або cmd - (на Apple Mac)!</b> Тут також будуть зʼявлятися інші підказки.</p>
+    <br>
+    <div class="inner-canvas">
+      <canvas id="canvas" style="cursor: none;" width = "1500" height = "800"></canvas>
+      <div class="sidebar">
+        <form method="POST" action="{% url 'physics:save_project' project.id %}">
+          {% csrf_token %}
+          <input type="hidden" id="preview" name="preview" value="">
+          <input type="hidden" id="saveWorldSettings" name="saveWorldSettings" value="{{project.world_settings_data}}">
+          <input type="hidden" id="saveWorld" name="saveWorld" value="{{project.data}}">
+          {% if request.user == project.user %}
+          <button class="update-button" id="save" style="color: orange; font-size: 25px;">Зберегти проект</button>
+          {% endif %}
+        </form>
+        {% if request.user != project.user %}
+          <a class="button" style="display:block; max-width: 70%;" href="{% url 'physics:projects_of' project.user.id %}">Інші проекти від {{project.user.username}}</a>
+        {% else %}
+          <button class="update-button" id="project-settings">Налаштування проекту</button>
+        {% endif %}
+        <button class="update-button" id="base-learning">Базове управління</button>
+        <hr>
+        <h3>Режим: <span class="variable" id="mode">Нема</span></h3>
+        <div class="world_settings">
+          <h2>Налаштування світу:</h2>
+          
+          <label id="label-world_gravity-${obj_id}">Силя тяжіння: </label>
+          <input type="number" step="0.01" id="world_gravity" placeholder="Сила тяжіння" value="10">
+          <button class="update-button world-update-button" id="gravity">Виключити гравітацію</button>
+          <button class="update-button world-update-button" id="physics">Виключити фізичну симуляцію</button>
+          <br>
+        </div>
+        <hr>
+        <a href="#" id="see_object_list" class="small-button">Список об'єктів ↓</a>
+        <div id="objects_list">
+          
+        </div>
+        <hr>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-button" id="create_box">Створити коробку (U)</button>
+      <button class="menu-button" id="create_wall">Створити стіну (I)</button>
+      <button class="menu-button" id="create_circle">Створити круг (O)</button>
+      <button class="menu-button" id="create_joint">Створити з'єднання (P)</button>
+    </div>
+    <div class="menu">
+      <button class="menu-button" id="move">Рухати об'єкт (H)</button>
+      <button class="menu-button" id="select">Вибрати об'єкт (J)</button>
+      <button class="menu-button" id="delete">Видалити об'єкт (K)</button>
+      <button class="menu-button" id="copy">Скопіювати об'єкт (L)</button>
+    </div>
+  </div>
+  <script type="text/javascript" src="{% static './js/objects/box.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/objects/circle.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/objects/joint.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/objects/camera.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/createBox.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/createCircle.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/updateCircle.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/updateBox.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/addBoxToList.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/addCircleToList.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/addJointToList.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/functions/getBodyAtMouse.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/interface_handler.js' %}"></script>
+  <script type="text/javascript" src="{% static './js/main.js' %}"></script>
+{% endblock %}

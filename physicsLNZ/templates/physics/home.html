@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Physics LNZ | Головна{% endblock %}
+
+{% block content %}
+    <br>
+    <h1>Вітаємо на проекті <b style="color: orange;">Physics LNZ</b></h1>
+    <br>
+    <center>
+        <div style="width: 70%; font-size: 23px;">
+            <p style="text-align:left;">Використовуйте наш сайт для створення різноманітних <b>фізичних симуляцій!</b></p>
+            <p style="text-align:left;"><b>Зареєструйтеся</b> для того, щоб створювати проекти і експерементувати використовуючи інструменти, які надає наш веб-сайт.</p>
+            <p style="text-align:left;">Ваші проекти можуть бути <b>приватними</b> або <b>публічними</b>, щоб будь-хто міг подивитися вашу цікаву роботу.</p>
+            <p style="text-align:left;">Проектом може користуватися будь-хто і для чого завгодно, головне <b>фантазуйте і створюйте!</b></p>    
+        </div>
+    </center>
+    <br>
+    <h1>Подивіться проекти наших користувачів:</h1>
+    <br>
+    {% if projects %}
+        <center>
+        <div class="projects">
+            {% for project in projects %}
+                <a href="{% url 'physics:project' project.id %}" class="project">
+                    <div style="text-align:left;">
+                        <div class="logo" style="background-image: url('{{project.preview.url}}')">
+                        </div>
+                        <h1 style="text-align: left;">{{project.name}}</h1>
+                        <p>{{project.user.username}}</p>
+                        <em>{{project.creation_date}}</em>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        </center>
+    {% else %}
+
+    <center>
+        <br>
+        <br>
+        <br>
+        <p>Ще ніхто не створив своїх проектів</p>
+    </center>
+    {% endif %}
+
+{% endblock %}

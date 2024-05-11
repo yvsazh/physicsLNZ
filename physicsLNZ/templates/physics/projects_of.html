@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Physics LNZ | Проекти від {{requested_user.username}}{% endblock %}
+
+{% block content %}
+    {% if projects %}
+    <br>
+        <h1>Проекти користувача <b style="color: orange;">{{requested_user.username}}</b></h1>
+        <center>
+        <div class="projects">
+            {% for project in projects %}
+                <a href="{% url 'physics:project' project.id %}" class="project">
+                    <div>
+                        <div class="logo" style="background-image: url('{{project.preview.url}}')"></div>
+                        <h1 style="text-align: left;">{{project.name}}</h1>
+                        <p>{{project.user.username}}</p>
+                        <em>{{project.creation_date}}</em>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        </center>
+    {% else %}
+
+    <center>
+        <br>
+        <br>
+        <br>
+        <p>Цей користувач ще не створив проектів</p>
+    </center>
+    {% endif %}
+{% endblock %}

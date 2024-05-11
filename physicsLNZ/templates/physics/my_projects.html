@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Physics LNZ | Мої проекти{% endblock %}
+
+{% block content %}
+    {% if projects %}
+    <center>
+        <br>
+        <h1>Мої проекти</h1>
+        <div class="projects">
+            {% for project in projects %}
+                <a href="{% url 'physics:project' project.id %}" class="project">
+                    <div>
+                        <div class="logo" style="background-image: url('{{project.preview.url}}')"></div>
+                        <h1 style="text-align: left;">{{project.name}}</h1>
+                        <p style="text-align:left;">{{project.user.username}}</p>
+                        <p style="text-align:left;"><em>{{project.creation_date}}</em></p>
+                        {% if project.privacy == "public" %}
+                        <p style="color: lightgreen;">{{project.privacy}}</p>
+                        {% else %}
+                        <p style="color: red;">{{project.privacy}}</p>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </center>
+    {% else %}
+
+    <center>
+        <br>
+        <br>
+        <br>
+        <p>Ти ще не створив жодного проекта!</p>
+    </center>
+    {% endif %}
+    <center>
+        <br>
+        <br>
+        <br>
+        <a href="{% url 'physics:create_project' %}" class="button">Створити проект</a>
+    </center>
+{% endblock %}
